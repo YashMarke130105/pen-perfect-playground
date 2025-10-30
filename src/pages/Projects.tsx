@@ -25,6 +25,10 @@ interface Project {
   js_code: string;
   created_at: string;
   updated_at: string;
+  user_id: string;
+  profiles?: {
+    username: string;
+  };
 }
 
 export default function Projects() {
@@ -36,32 +40,45 @@ export default function Projects() {
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [user, loading, navigate]);
+  // Allow viewing projects without login (public gallery)
 
   useEffect(() => {
-    if (user) {
-      fetchProjects();
-    }
-  }, [user]);
+    fetchProjects();
+  }, []);
 
   const fetchProjects = async () => {
-    if (!user) return;
-    
     setLoadingProjects(true);
     try {
-      const { data, error } = await supabase
+      // Fetch all projects (public gallery)
+      const { data: projectsData, error: projectsError } = await supabase
         .from('projects')
         .select('*')
-        .eq('user_id', user.id)
         .order('updated_at', { ascending: false });
 
-      if (error) throw error;
+      if (projectsError) throw projectsError;
       
-      setProjects(data || []);
+      // Fetch usernames for all projects
+      if (projectsData && projectsData.length > 0) {
+        const userIds = [...new Set(projectsData.map(p => p.user_id))];
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, username')
+          .in('id', userIds);
+
+        if (!profilesError && profilesData) {
+          // Map usernames to projects
+          const profilesMap = new Map(profilesData.map(p => [p.id, p]));
+          const enrichedProjects = projectsData.map(project => ({
+            ...project,
+            profiles: profilesMap.get(project.user_id)
+          }));
+          setProjects(enrichedProjects);
+        } else {
+          setProjects(projectsData);
+        }
+      } else {
+        setProjects([]);
+      }
     } catch (error: any) {
       toast({
         title: "Error loading projects",
@@ -80,13 +97,14 @@ export default function Projects() {
   };
 
   const handleDeleteProject = async () => {
-    if (!deleteId) return;
+    if (!deleteId || !user) return;
     
     try {
       const { error } = await supabase
         .from('projects')
         .delete()
-        .eq('id', deleteId);
+        .eq('id', deleteId)
+        .eq('user_id', user.id); // Only allow deleting own projects
 
       if (error) throw error;
       
@@ -129,22 +147,31 @@ export default function Projects() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-header-bg border-b border-border px-4 py-3 flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/editor')}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Editor
-        </Button>
-        <div className="flex items-center gap-2">
-          <Code2 className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold">CodeCanvas Live</h1>
+      <header className="bg-header-bg border-b border-border px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="sm" onClick={() => navigate('/editor')}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Editor
+          </Button>
+          <div className="flex items-center gap-2">
+            <Code2 className="h-6 w-6 text-primary" />
+            <h1 className="text-xl font-bold">CodeCanvas Live</h1>
+          </div>
         </div>
+        {!user && (
+          <Button onClick={() => navigate('/auth')}>
+            Sign In
+          </Button>
+        )}
       </header>
 
       <div className="container max-w-6xl mx-auto py-12 px-4">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">My Projects</h2>
+          <h2 className="text-3xl font-bold mb-2">
+            {user ? 'All Projects' : 'Project Gallery'}
+          </h2>
           <p className="text-muted-foreground">
-            Manage and open your saved projects
+            {user ? 'Browse and manage all projects' : 'Explore projects created by our community'}
           </p>
         </div>
 
@@ -163,34 +190,51 @@ export default function Projects() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {projects.map((project) => (
-              <Card key={project.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="truncate">{project.title}</CardTitle>
-                  <CardDescription className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    {formatDate(project.updated_at)}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <Button 
-                    className="w-full" 
-                    onClick={() => handleLoadProject(project)}
-                  >
-                    <FileCode className="h-4 w-4 mr-2" />
-                    Open Project
-                  </Button>
-                  <Button 
-                    variant="destructive" 
-                    className="w-full"
-                    onClick={() => setDeleteId(project.id)}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+            {projects.map((project) => {
+              const isOwnProject = user && project.user_id === user.id;
+              return (
+                <Card key={project.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <CardTitle className="truncate">{project.title}</CardTitle>
+                    <CardDescription className="space-y-1">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {formatDate(project.updated_at)}
+                      </div>
+                      {project.profiles && (
+                        <div className="text-xs">
+                          by {project.profiles.username}
+                        </div>
+                      )}
+                      {isOwnProject && (
+                        <div className="text-xs font-semibold text-primary">
+                          Your Project
+                        </div>
+                      )}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <Button 
+                      className="w-full" 
+                      onClick={() => handleLoadProject(project)}
+                    >
+                      <FileCode className="h-4 w-4 mr-2" />
+                      Open Project
+                    </Button>
+                    {isOwnProject && (
+                      <Button 
+                        variant="destructive" 
+                        className="w-full"
+                        onClick={() => setDeleteId(project.id)}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>

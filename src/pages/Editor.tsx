@@ -38,11 +38,7 @@ export default function Editor() {
   const [username, setUsername] = useState<string>('');
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [user, loading, navigate]);
+  // Allow guest access - no redirect needed
 
   useEffect(() => {
     if (user) {
@@ -90,10 +86,11 @@ export default function Editor() {
   const handleSave = async () => {
     if (!user) {
       toast({
-        title: "Not authenticated",
-        description: "Please sign in to save projects",
+        title: "Sign in required",
+        description: "Please sign in to save your project",
         variant: "destructive",
       });
+      navigate('/auth');
       return;
     }
 
@@ -110,7 +107,8 @@ export default function Editor() {
             css_code: css,
             js_code: js,
           })
-          .eq('id', currentProjectId);
+          .eq('id', currentProjectId)
+          .eq('user_id', user.id); // Only update own projects
 
         if (error) throw error;
         
@@ -246,31 +244,43 @@ export default function Editor() {
             Export
           </Button>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <User className="h-4 w-4 mr-2" />
-                {username || 'User'}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigate('/projects')}>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <User className="h-4 w-4 mr-2" />
+                  {username || 'User'}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/projects')}>
+                  <FolderOpen className="h-4 w-4 mr-2" />
+                  All Projects
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/account')}>
+                  <User className="h-4 w-4 mr-2" />
+                  Account Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={signOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Button onClick={() => navigate('/projects')} variant="outline" size="sm">
                 <FolderOpen className="h-4 w-4 mr-2" />
-                My Projects
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/account')}>
-                <User className="h-4 w-4 mr-2" />
-                Account Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={signOut}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                Browse Projects
+              </Button>
+              <Button onClick={() => navigate('/auth')} size="sm">
+                Sign In
+              </Button>
+            </>
+          )}
         </div>
       </header>
 
