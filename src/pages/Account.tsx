@@ -101,7 +101,7 @@ export default function Account() {
         </Button>
         <div className="flex items-center gap-2">
           <Code2 className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold">CodeCanvas Live</h1>
+          <h1 className="text-xl font-bold">CodeSpace</h1>
         </div>
       </header>
 

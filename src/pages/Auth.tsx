@@ -72,7 +72,7 @@ export default function Auth() {
               <Code2 className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">CodeCanvas Live</CardTitle>
+          <CardTitle className="text-2xl font-bold">CodeSpace</CardTitle>
           <CardDescription>
             Create and share your code creations
           </CardDescription>

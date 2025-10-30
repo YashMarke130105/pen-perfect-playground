@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } else {
         toast({
           title: "Account created!",
-          description: "Welcome to CodeCanvas Live!",
+          description: "Welcome to CodeSpace!",
         });
         navigate('/editor');
       }

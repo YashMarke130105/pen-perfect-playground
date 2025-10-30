@@ -35,7 +35,7 @@ export default function Landing() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Code2 className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold">CodeCanvas Live</h1>
+            <h1 className="text-2xl font-bold">CodeSpace</h1>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => navigate('/auth')}>
@@ -105,7 +105,7 @@ export default function Landing() {
       {/* Footer */}
       <footer className="border-t border-border">
         <div className="container mx-auto px-4 py-6 text-center text-muted-foreground">
-          <p>© 2025 CodeCanvas Live. Built with ❤️ for developers.</p>
+          <p>© 2025 CodeSpace. Built with ❤️ for developers.</p>
         </div>
       </footer>
     </div>

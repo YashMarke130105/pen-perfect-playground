@@ -32,7 +32,7 @@ export default function Editor() {
   
   const [html, setHtml] = useState('<!-- Write your HTML here -->\n<h1>Hello World!</h1>');
   const [css, setCss] = useState('/* Write your CSS here */\nbody {\n  font-family: Arial, sans-serif;\n  padding: 20px;\n}');
-  const [js, setJs] = useState('// Write your JavaScript here\nconsole.log("Hello from CodeCanvas!");');
+  const [js, setJs] = useState('// Write your JavaScript here\nconsole.log("Hello from CodeSpace!");');
   const [title, setTitle] = useState('Untitled Project');
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
   const [username, setUsername] = useState<string>('');
@@ -191,7 +191,7 @@ export default function Editor() {
     setTitle('Untitled Project');
     setHtml('<!-- Write your HTML here -->\n<h1>Hello World!</h1>');
     setCss('/* Write your CSS here */\nbody {\n  font-family: Arial, sans-serif;\n  padding: 20px;\n}');
-    setJs('// Write your JavaScript here\nconsole.log("Hello from CodeCanvas!");');
+    setJs('// Write your JavaScript here\nconsole.log("Hello from CodeSpace!");');
     
     toast({
       title: "New project created",
@@ -216,7 +216,7 @@ export default function Editor() {
       <header className="bg-header-bg border-b border-border px-4 py-3 flex items-center gap-4">
         <div className="flex items-center gap-2">
           <Code2 className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold">CodeCanvas Live</h1>
+          <h1 className="text-xl font-bold">CodeSpace</h1>
         </div>
         
         <Input
