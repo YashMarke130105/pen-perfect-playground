@@ -47,8 +47,31 @@ export default function Editor() {
   useEffect(() => {
     if (user) {
       fetchUsername();
+      checkForLoadProject();
     }
   }, [user]);
+
+  const checkForLoadProject = () => {
+    const loadProjectData = sessionStorage.getItem('loadProject');
+    if (loadProjectData) {
+      try {
+        const project = JSON.parse(loadProjectData);
+        setTitle(project.title);
+        setHtml(project.html_code || '');
+        setCss(project.css_code || '');
+        setJs(project.js_code || '');
+        setCurrentProjectId(project.id);
+        sessionStorage.removeItem('loadProject');
+        
+        toast({
+          title: "Project loaded",
+          description: `${project.title} is ready to edit`,
+        });
+      } catch (error) {
+        console.error('Error loading project:', error);
+      }
+    }
+  };
 
   const fetchUsername = async () => {
     if (!user) return;
@@ -232,6 +255,15 @@ export default function Editor() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate('/projects')}>
+                <FolderOpen className="h-4 w-4 mr-2" />
+                My Projects
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/account')}>
+                <User className="h-4 w-4 mr-2" />
+                Account Settings
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={signOut}>
                 <LogOut className="h-4 w-4 mr-2" />
