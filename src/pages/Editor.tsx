@@ -52,16 +52,22 @@ export default function Editor() {
     if (loadProjectData) {
       try {
         const project = JSON.parse(loadProjectData);
-        setTitle(project.title);
+        const isOwnProject = user && project.user_id === user.id;
+        
+        setTitle(isOwnProject ? project.title : `Copy of ${project.title}`);
         setHtml(project.html_code || '');
         setCss(project.css_code || '');
         setJs(project.js_code || '');
-        setCurrentProjectId(project.id);
+        
+        // Only set project ID if it's the user's own project
+        setCurrentProjectId(isOwnProject ? project.id : null);
         sessionStorage.removeItem('loadProject');
         
         toast({
-          title: "Project loaded",
-          description: `${project.title} is ready to edit`,
+          title: isOwnProject ? "Project loaded" : "Project copied",
+          description: isOwnProject 
+            ? `${project.title} is ready to edit` 
+            : `You're viewing a copy. Save to create your own version.`,
         });
       } catch (error) {
         console.error('Error loading project:', error);
