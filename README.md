@@ -1,73 +1,166 @@
-# Welcome to your Lovable project
+# 🚀 CodeSpace
 
-## Project info
+**CodeSpace** is a browser-based coding platform that allows users to write, test, and share HTML, CSS, and JavaScript code in real time.
+It provides an interactive environment similar to CodePen or JSFiddle, designed for students, developers, and coding enthusiasts to experiment and showcase web projects without requiring any local setup.
 
-**URL**: https://lovable.dev/projects/8c6da67a-0b74-4be7-a78f-66c9ce748262
+---
 
-## How can I edit this code?
+## 🧩 Project Overview
+URL - https://codespace-orcin.vercel.app/
 
-There are several ways of editing your application.
+### 🔹 Objective
 
-**Use Lovable**
+To provide an easy-to-use web application where users can:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8c6da67a-0b74-4be7-a78f-66c9ce748262) and start prompting.
+* Create and manage code snippets (“pens”)
+* Preview HTML, CSS, and JavaScript output instantly
+* Save and share projects with others via unique links
 
-Changes made via Lovable will be committed automatically to this repo.
+### 🔹 Technology Stack
 
-**Use your preferred IDE**
+* **Frontend:** React (TypeScript + Vite)
+* **UI:** Tailwind CSS + shadcn/ui
+* **Code Editor:** CodeMirror / Monaco Editor
+* **Backend Services:** Firebase (Authentication, Firestore, Storage)
+* **Hosting:** Firebase Hosting
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## ⚙️ Features
 
-Follow these steps:
+### 👤 User Management
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+* Secure user registration and login using Firebase Authentication
+* Google OAuth integration for quick sign-in
+* Passwords managed securely via Firebase
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 💻 Code Editor
 
-# Step 3: Install the necessary dependencies.
-npm i
+* Three editor panels: **HTML**, **CSS**, **JavaScript**
+* Real-time **live preview** of code output using iframe rendering
+* Syntax highlighting for better readability
+* Auto-save functionality (stores code in Firebase Firestore)
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### 📁 Project Management
+
+* Create, update, and delete “pens”
+* Save and load projects from user dashboard
+* Search pens by title or tags
+* Share code via unique, public URLs
+
+### 🌐 Hosting & Deployment
+
+* Deployed on Firebase Hosting for global access
+* Public pens viewable through shareable links
+* Option to export/download code files locally
+
+---
+
+## 🧠 System Architecture
+
+**Frontend (React SPA)** → Provides user interface, editor panels, and preview rendering
+**Backend (Firebase Services)** → Handles authentication, database storage, and hosting
+**Firestore Database** → Stores user pens, metadata, and user info
+**Firebase Storage** → Manages uploaded or saved files
+
+---
+
+## 📜 Functional Requirements (Summary)
+
+| ID       | Description                                            |
+| -------- | ------------------------------------------------------ |
+| **FR-1** | Secure user account management (register/login/logout) |
+| **FR-2** | Real-time code editing (HTML, CSS, JS)                 |
+| **FR-3** | Auto-save and project management                       |
+| **FR-4** | Live output preview                                    |
+| **FR-5** | Share and export functionality                         |
+
+---
+
+## 🧩 Non-Functional Requirements
+
+| Category        | Description                                     |
+| --------------- | ----------------------------------------------- |
+| **Performance** | Live preview updates in under 1 second          |
+| **Security**    | HTTPS communication; Firebase-managed auth      |
+| **Usability**   | Clean, responsive, beginner-friendly UI         |
+| **Reliability** | Firebase guarantees uptime and data durability  |
+| **Scalability** | Supports thousands of concurrent users and pens |
+
+---
+
+## 🧭 Use Case Overview
+
+### Actors
+
+* **Guest User:** Can browse and view public pens
+* **Registered User:** Can create, edit, save, and share pens
+
+### Example Flow: Creating and Sharing a Pen
+
+1. User logs in via Firebase Authentication
+2. Opens the code editor
+3. Writes HTML, CSS, and JS code
+4. Live preview renders output in real time
+5. User saves the pen to Firestore
+6. A shareable public link is generated automatically
+
+---
+
+## ✅ Validation Criteria
+
+* Users can successfully register/login/logout
+* Live preview updates dynamically while typing
+* Saved pens can be reloaded from Firestore
+* Shared links open the correct project view
+* App remains available globally via Firebase Hosting
+
+---
+
+## 🧰 Installation & Setup
+
+### Prerequisites
+
+* Node.js (v18+ recommended)
+* npm (v9+)
+
+### Steps
+
+```bash
+# Clone this repository
+git clone <YOUR_REPOSITORY_URL>
+
+# Navigate to the project folder
+cd codespace
+
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Then open **[http://localhost:5173/](http://localhost:5173/)** in your browser.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## 🌍 Deployment
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. Build the project
 
-## What technologies are used for this project?
+   ```bash
+   npm run build
+   ```
+2. Deploy via Firebase CLI
 
-This project is built with:
+   ```bash
+   firebase deploy
+   ```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Your app will be live globally within seconds.
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/8c6da67a-0b74-4be7-a78f-66c9ce748262) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+> *“CodeSpace empowers learners and developers to code, preview, and share — all in one place.”*
